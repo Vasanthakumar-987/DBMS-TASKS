@@ -1,6 +1,6 @@
 # Task II Schema
 
-```
+```sql
 DROP DATABASE IF EXISTS ProductManagement;
 CREATE DATABASE ProductManagement;
 USE ProductManagement;

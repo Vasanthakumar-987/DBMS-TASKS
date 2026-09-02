@@ -1,6 +1,3 @@
--- TASK VI: PRODUCT REVIEW AND RATING MANAGEMENT SYSTEM
--- Amazon E-Commerce Database Project
-
 DROP DATABASE IF EXISTS amazon_review_rating_management;
 CREATE DATABASE amazon_review_rating_management;
 USE amazon_review_rating_management;
@@ -17,7 +14,6 @@ CREATE TABLE Products (
     price DECIMAL(10,2) NOT NULL
 );
 
--- Review table: stores customer feedback
 CREATE TABLE Review (
     review_id INT PRIMARY KEY,
     customer_id INT NOT NULL,
@@ -28,7 +24,6 @@ CREATE TABLE Review (
     FOREIGN KEY (product_id) REFERENCES Products(product_id)
 );
 
--- Rating table: stores numerical rating for each review
 CREATE TABLE Rating (
     rating_id INT PRIMARY KEY,
     review_id INT NOT NULL UNIQUE,
@@ -38,7 +33,6 @@ CREATE TABLE Rating (
     FOREIGN KEY (product_id) REFERENCES Products(product_id)
 );
 
--- Sample customers
 INSERT INTO Customers VALUES
 (1, 'Arun Kumar', 'arun@gmail.com'),
 (2, 'Priya', 'priya@gmail.com'),
@@ -46,7 +40,6 @@ INSERT INTO Customers VALUES
 (4, 'Karthik', 'karthik@gmail.com'),
 (5, 'Divya', 'divya@gmail.com');
 
--- Sample products
 INSERT INTO Products VALUES
 (101, 'Wireless Mouse', 599.00),
 (102, 'Mechanical Keyboard', 2499.00),
@@ -54,7 +47,6 @@ INSERT INTO Products VALUES
 (104, 'Laptop Stand', 1299.00),
 (105, 'Web Camera', 1999.00);
 
--- Customer feedback
 INSERT INTO Review VALUES
 (1, 1, 101, 'Good quality and smooth performance.', '2026-08-25'),
 (2, 2, 101, 'Value for money.', '2026-08-26'),
@@ -64,8 +56,6 @@ INSERT INTO Review VALUES
 (6, 1, 104, 'Strong and useful stand.', '2026-08-30'),
 (7, 2, 105, 'Clear video quality.', '2026-08-31'),
 (8, 3, 105, 'Very good camera for online classes.', '2026-09-01');
-
--- Numerical ratings
 INSERT INTO Rating VALUES
 (1, 1, 101, 4.0),
 (2, 2, 101, 4.5),
@@ -76,7 +66,6 @@ INSERT INTO Rating VALUES
 (7, 7, 105, 5.0),
 (8, 8, 105, 4.5);
 
--- 1. Retrieve product review details
 SELECT
     p.product_name,
     c.customer_name,
@@ -89,7 +78,6 @@ JOIN Customers c ON r.customer_id = c.customer_id
 JOIN Products p ON r.product_id = p.product_id
 ORDER BY p.product_id, r.review_date;
 
--- 2. Calculate average rating for every product
 SELECT
     p.product_id,
     p.product_name,
@@ -100,7 +88,6 @@ JOIN Rating rt ON p.product_id = rt.product_id
 GROUP BY p.product_id, p.product_name
 ORDER BY average_rating DESC;
 
--- 3. Identify highly rated products (average rating >= 4.5)
 SELECT
     p.product_id,
     p.product_name,
@@ -111,7 +98,6 @@ GROUP BY p.product_id, p.product_name
 HAVING AVG(rt.rating) >= 4.5
 ORDER BY average_rating DESC;
 
--- 4. Find the highest-rated product
 SELECT
     p.product_name,
     ROUND(AVG(rt.rating), 2) AS average_rating
@@ -121,7 +107,6 @@ GROUP BY p.product_id, p.product_name
 ORDER BY average_rating DESC
 LIMIT 1;
 
--- 5. Overall rating summary
 SELECT
     COUNT(*) AS total_ratings,
     ROUND(AVG(rating), 2) AS overall_average_rating,

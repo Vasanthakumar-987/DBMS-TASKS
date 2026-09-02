@@ -13,7 +13,6 @@ CREATE TABLE Products (
     stock INT NOT NULL
 );
 
--- 3. Orders table
 CREATE TABLE Orders (
     order_id INT PRIMARY KEY,
     customer_id INT NOT NULL,

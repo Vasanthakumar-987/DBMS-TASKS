@@ -1,6 +1,3 @@
--- TASK V: PAYMENT TRANSACTION MANAGEMENT SYSTEM
--- Amazon E-Commerce Database Project
-
 DROP DATABASE IF EXISTS amazon_payment_management;
 CREATE DATABASE amazon_payment_management;
 USE amazon_payment_management;
@@ -18,8 +15,6 @@ CREATE TABLE Orders (
     total_amount DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (customer_id) REFERENCES Customers(customer_id)
 );
-
--- Payment table
 CREATE TABLE Payment (
     payment_id INT PRIMARY KEY,
     order_id INT NOT NULL,
@@ -31,14 +26,12 @@ CREATE TABLE Payment (
     FOREIGN KEY (order_id) REFERENCES Orders(order_id)
 );
 
--- Sample customers
 INSERT INTO Customers VALUES
 (1, 'Arun Kumar', 'arun@gmail.com'),
 (2, 'Priya', 'priya@gmail.com'),
 (3, 'Vasanth', 'vasanth@gmail.com'),
 (4, 'Karthik', 'karthik@gmail.com');
 
--- Sample orders
 INSERT INTO Orders VALUES
 (1001, 1, '2026-09-01', 1598.00),
 (1002, 2, '2026-09-01', 3798.00),
@@ -46,7 +39,6 @@ INSERT INTO Orders VALUES
 (1004, 4, '2026-09-02', 2499.00),
 (1005, 1, '2026-09-02', 599.00);
 
--- Successful and failed payment transactions
 INSERT INTO Payment VALUES
 (1, 1001, 'UPI', '2026-09-01', 1598.00, 'SUCCESS', 'TXN10001'),
 (2, 1002, 'Credit Card', '2026-09-01', 3798.00, 'SUCCESS', 'TXN10002'),
@@ -54,15 +46,11 @@ INSERT INTO Payment VALUES
 (4, 1004, 'Net Banking', '2026-09-02', 2499.00, 'SUCCESS', 'TXN10004'),
 (5, 1005, 'UPI', '2026-09-02', 599.00, 'FAILED', 'TXN10005');
 
--- View all payment transactions
 SELECT * FROM Payment;
-
--- Modify a failed transaction after successful retry
 UPDATE Payment
 SET payment_status = 'SUCCESS'
 WHERE payment_id = 3;
 
--- Analyze payment methods used by customers
 SELECT
     payment_mode,
     COUNT(*) AS transaction_count,
@@ -71,7 +59,6 @@ FROM Payment
 GROUP BY payment_mode
 ORDER BY transaction_count DESC;
 
--- Count successful and failed transactions
 SELECT
     payment_status,
     COUNT(*) AS transaction_count,
@@ -79,7 +66,6 @@ SELECT
 FROM Payment
 GROUP BY payment_status;
 
--- Payment transaction report
 SELECT
     p.payment_id,
     c.customer_name,

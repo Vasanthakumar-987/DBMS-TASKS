@@ -1,40 +1,56 @@
+
 USE amazon_db;
 
--- 1. Aggregate functions and total sales (completed payments only).
-SELECT COUNT(*) AS paid_orders,
-       COALESCE(SUM(o.total_amount), 0) AS total_sales,
-       AVG(o.total_amount) AS average_order,
-       MIN(o.total_amount) AS minimum_order,
-       MAX(o.total_amount) AS maximum_order
-FROM ORDERS o JOIN PAYMENT pay ON o.order_id = pay.order_id
-WHERE pay.status = 'Completed';
+-- 1. INNER JOIN: Customer, Product, Order, Payment
+SELECT u.name, o.order_id, p.title,
+       i.quantity, i.price,
+       pay.payment_method, pay.status
+FROM `USER` u
+INNER JOIN ORDERS o ON u.user_id = o.user_id
+INNER JOIN ORDER_ITEM i ON o.order_id = i.order_id
+INNER JOIN PRODUCT p ON i.product_id = p.product_id
+INNER JOIN PAYMENT pay ON o.order_id = pay.order_id;
 
--- 2. Daily sales report.
-SELECT DATE(o.order_date) AS sale_date, SUM(o.total_amount) AS sales
-FROM ORDERS o JOIN PAYMENT pay ON o.order_id = pay.order_id
-WHERE pay.status = 'Completed'
-GROUP BY DATE(o.order_date)
-ORDER BY sale_date;
+-- 2. LEFT JOIN: Display all customers
+SELECT u.user_id, u.name,
+       o.order_id, o.total_amount
+FROM `USER` u
+LEFT JOIN ORDERS o ON u.user_id = o.user_id;
 
--- 3. Top customers by paid purchase amount.
-SELECT u.name, SUM(o.total_amount) AS total_spent
+-- 3. RIGHT JOIN: Display all orders
+SELECT o.order_id, o.total_amount,
+       pay.payment_method, pay.status
+FROM PAYMENT pay
+RIGHT JOIN ORDERS o ON pay.order_id = o.order_id;
+
+-- 4. COMPLETE ORDER DETAILS
+SELECT o.order_id, o.order_date,
+       u.name AS customer_name,
+       p.title AS product_name,
+       i.quantity, i.price,
+       pay.payment_method, pay.status
+FROM ORDERS o
+JOIN `USER` u ON o.user_id = u.user_id
+LEFT JOIN ORDER_ITEM i ON o.order_id = i.order_id
+LEFT JOIN PRODUCT p ON i.product_id = p.product_id
+LEFT JOIN PAYMENT pay ON o.order_id = pay.order_id;
+
+-- 5. CUSTOMER PURCHASE HISTORY
+SELECT u.name, o.order_id,
+       o.order_date, p.title,
+       i.quantity, i.price
 FROM `USER` u
 JOIN ORDERS o ON u.user_id = o.user_id
-JOIN PAYMENT pay ON o.order_id = pay.order_id
-WHERE pay.status = 'Completed'
-GROUP BY u.user_id, u.name
-ORDER BY total_spent DESC, u.user_id;
+JOIN ORDER_ITEM i ON o.order_id = i.order_id
+JOIN PRODUCT p ON i.product_id = p.product_id
+ORDER BY u.name, o.order_date;
 
--- 4. Best-selling products, ranked by units sold.
-SELECT p.title, SUM(i.quantity) AS units_sold,
-       SUM(i.quantity * i.price) AS sales
+-- 6. MULTI-TABLE SALES REPORT
+SELECT p.title AS product_name,
+       SUM(i.quantity) AS total_quantity,
+       SUM(i.quantity * i.price) AS total_sales
 FROM PRODUCT p
 JOIN ORDER_ITEM i ON p.product_id = i.product_id
-JOIN PAYMENT pay ON i.order_id = pay.order_id
-WHERE pay.status = 'Completed'
+JOIN ORDERS o ON i.order_id = o.order_id
 GROUP BY p.product_id, p.title
-ORDER BY units_sold DESC, sales DESC, p.product_id;
-
--- 5. Category-wise sales requires a product-to-category relationship.
--- The existing amazon_db schema has no category table or column.
--- This report is pending the actual category mapping; see README.md.
+ORDER BY total_sales DESC;

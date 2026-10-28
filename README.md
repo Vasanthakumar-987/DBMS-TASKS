@@ -245,3 +245,19 @@ This database design successfully establishes a robust relational foundation for
 3. **Historical Accuracy:** Captures explicit line-item unit pricing (`ORDER_ITEM.price`) independently of future product catalog price adjustments (`PRODUCT.price`).
 
 The structured SQL implementation provides a seamless path for integration into modern web backends (e.g., Node.js, Python/Django, or Java Spring Boot).
+
+
+---
+
+## 📚 Tasks XI–XV: Advanced DBMS Practice
+
+These folders use the existing `amazon_db` schema described above. Review each README before running its SQL file; run against a test database or backup first, especially for transaction and security tasks.
+
+| Task | Topic | Files |
+| --- | --- | --- |
+| Task XI | Database Automation using Views and Procedures | [README](Task11/README.md) · [SQL queries](Task11/database_automation.sql) |
+| Task XII | Transaction Management System | [README](Task12/README.md) · [SQL queries](Task12/transaction_management.sql) |
+| Task XIII | Database Security and Performance Optimization | [README](Task13/README.md) · [SQL queries](Task13/security_performance.sql) |
+| Task XIV | Business Intelligence and AI Data Preparation | [README](Task14/README.md) · [SQL queries](Task14/business_intelligence_ai_prep.sql) |
+| Task XV | Industry Capstone Project — E-Commerce Intelligence Platform | [README](Task15/README.md) · [Capstone SQL](Task15/capstone_queries.sql) · [ER Diagram](Task15/ER_Diagram.md) |
+
